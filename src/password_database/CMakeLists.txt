@@ -1,21 +1,24 @@
 # src/password_database/CMakeLists.txt
+find_package(CryptoPP REQUIRED)
 
-# Add source files for the password_database library
 set(PASSWORD_DATABASE_SOURCES
     helpers.hpp
     operations.cpp
 )
 
-# Add library target for password_database
 add_library(password_database STATIC ${PASSWORD_DATABASE_SOURCES})
 
-# Set include directories if needed
+# Set include directories
 target_include_directories(password_database
     PRIVATE
     ${CMAKE_SOURCE_DIR}/include
 )
 
-# Set additional compiler options
+target_link_libraries(password_database
+    PRIVATE
+    CryptoPP::CryptoPP
+)
+
 target_compile_options(password_database
     PRIVATE
     /W4   # Warning level 4

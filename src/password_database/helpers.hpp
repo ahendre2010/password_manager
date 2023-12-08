@@ -4,28 +4,34 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <CryptoPP/hex.h>
+#include <CryptoPP/default.h>
 
 namespace password_database
 {
 	using CredentialDB = std::map<std::string, std::string>;
 	std::string encrypt_string(const char* instr, const char* passPhrase)
 	{
-		std::string outstr(instr);
+		std::string outstr;
 
-		//DefaultEncryptorWithMAC encryptor(passPhrase, new HexEncoder(new StringSink(outstr)));
-		//encryptor.Put((byte*)instr, strlen(instr));
-		//encryptor.MessageEnd();
+		if (strlen(instr) < 1) { return outstr; }
+
+		CryptoPP::DefaultEncryptorWithMAC encryptor(passPhrase, new CryptoPP::HexEncoder(new CryptoPP::StringSink(outstr)));
+		encryptor.Put((CryptoPP::byte*)instr, strlen(instr));
+		encryptor.MessageEnd();
 
 		return outstr;
 	}
 
 	std::string decrypt_string(const char* instr, const char* passPhrase)
 	{
-		std::string outstr(instr);
+		std::string outstr;
 
-		//HexDecoder decryptor(new DefaultDecryptorWithMAC(passPhrase, new StringSink(outstr)));
-		//decryptor.Put((byte*)instr, strlen(instr));
-		//decryptor.MessageEnd();
+		if (strlen(instr) < 1) { return outstr; }
+
+		CryptoPP::HexDecoder decryptor(new CryptoPP::DefaultDecryptorWithMAC(passPhrase, new CryptoPP::StringSink(outstr)));
+		decryptor.Put((CryptoPP::byte*)instr, strlen(instr));
+		decryptor.MessageEnd();
 
 		return outstr;
 	}
@@ -41,7 +47,6 @@ namespace password_database
 			sstream << std::endl;
 		}
 		std::string result = sstream.str();
-		result.pop_back(); // Remove trailing white space
 
 		return result;
 	}
@@ -84,20 +89,38 @@ namespace password_database
 		return true;
 	}
 
-	CredentialDB read_database_from_file(std::fstream& file_stream, const std::string& master_password)
+	CredentialDB read_database_from_file(std::filesystem::path& db_file_path, const std::string& master_password)
 	{
-		std::string encrypted_content{ std::istreambuf_iterator<char>(file_stream), {} };
+		std::fstream db_file_stream;
+		auto db_open_success = open_database_file(db_file_path, std::ios::in | std::ios::out, db_file_stream);
+		if (!db_open_success)
+		{
+			db_file_stream.close();
+			throw std::exception();
+		}
+
+		std::string encrypted_content{ std::istreambuf_iterator<char>(db_file_stream), {} };
+		db_file_stream.close();
+
 		std::string plain_text_content = decrypt_string(encrypted_content.c_str(), master_password.c_str());
 		CredentialDB credentials = deserialize_database(plain_text_content);
 		return credentials;
 	}
 
-	void write_database_to_file(std::fstream& file_stream, CredentialDB database, const std::string& master_password)
+	void write_database_to_file(std::filesystem::path& db_file_path, CredentialDB database, const std::string& master_password)
 	{
+		std::fstream db_file_stream;
+		auto db_open_success = open_database_file(db_file_path, std::ios::out | std::ios::trunc, db_file_stream);
+		if (!db_open_success)
+		{
+			db_file_stream.close();
+		}
+
 		std::string plain_text_content = serialize_database(database);
 		std::string encrypted_content = encrypt_string(plain_text_content.c_str(), master_password.c_str());
-		file_stream.clear();
-		file_stream.write(encrypted_content.c_str(), encrypted_content.size());
+		db_file_stream.clear();
+		db_file_stream.write(encrypted_content.c_str(), encrypted_content.size());
+		db_file_stream.close();
 	}
 
 #pragma region TestFunctions

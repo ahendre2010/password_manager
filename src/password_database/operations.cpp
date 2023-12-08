@@ -5,31 +5,12 @@ password_database::Operations::Operations(const std::string& db_file_path, const
 	: p_db_file_path(db_file_path)
 	, p_master_password(master_password)
 {
-	// Try opening database file
-	std::fstream db_file_stream;
-	auto db_open_success = open_database_file(p_db_file_path, std::ios::in | std::ios::out, db_file_stream);
-	if (!db_open_success)
-	{
-		db_file_stream.close();
-		throw std::exception();
-	}
-
-	// read database file
-	p_database = read_database_from_file(db_file_stream, master_password);
-	db_file_stream.close();
+	p_database = read_database_from_file(p_db_file_path, master_password);
 }
 
-password_database::Operations::~Operations() {
-	std::fstream db_file_stream;
-	auto db_open_success = open_database_file(p_db_file_path, std::ios::out | std::ios::trunc, db_file_stream);
-	if (!db_open_success)
-	{
-		db_file_stream.close();
-	}
-
-	// Save database on file system.
-	write_database_to_file(db_file_stream, p_database, p_master_password);
-	db_file_stream.close();
+password_database::Operations::~Operations()
+{
+	write_database_to_file(p_db_file_path, p_database, p_master_password);
 }
 
 void password_database::Operations::add_credential(const std::string& username, const std::string& password)
