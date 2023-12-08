@@ -14,9 +14,10 @@ namespace password_database
 		~Operations();
 
 		void add_credential(const std::string& username, const std::string& password);
-		void view_credential(const std::string& username, std::ostream& stream);
+		void view_credential(const std::string& username, std::ostream& stream) const;
 		void remove_credential(const std::string& username);
 
+		// Default methods which are not expected, should not be exposed.
 		Operations(const Operations&) = delete;
 		Operations& operator=(const Operations&) = delete;
 		Operations(Operations&&) = delete;

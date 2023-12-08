@@ -27,7 +27,7 @@ void password_database::Operations::add_credential(const std::string& username, 
 		p_database.emplace(std::pair(username, encrypted_password));
 }
 
-void password_database::Operations::view_credential(const std::string& username, std::ostream& stream)
+void password_database::Operations::view_credential(const std::string& username, std::ostream& stream) const
 {
 	auto it = p_database.find(username);
 	if (it == p_database.end()) return; // do nothing in case of username not found

@@ -1,5 +1,7 @@
 #include <iostream>
 #include <operations.h>
+#include <cctype>
+#include <algorithm>
 
 int main(int argc, char* argv[])
 {
@@ -23,10 +25,12 @@ int main(int argc, char* argv[])
 
 	try
 	{
-
 		password_database::Operations database(db_file_path, master_password);
-
-		// Perform operation.
+		
+		// transform operation string to lower case
+		std::transform(operation.begin(), operation.end(), operation.begin(),
+			[](unsigned char c) { return std::tolower(c); });
+		
 		if (operation == "add") {
 			//separate username and password from credential input.
 			auto delimiter_position = credential.find('=');
@@ -52,7 +56,7 @@ int main(int argc, char* argv[])
 		}
 	}
 	catch (...) {
-		std::cerr << "Error: something went wrong" << std::endl;
+		std::cerr << "Error: Something went wrong!" << std::endl;
 	}
 
 	return EXIT_SUCCESS;
