@@ -14,6 +14,12 @@ target_include_directories(password_manager
     ${CMAKE_SOURCE_DIR}/include
 )
 
+# Link the password_database library to the password_manager executable
+target_link_libraries(password_manager
+    PRIVATE
+    password_database
+)
+
 # Set output directory structure
 set_target_properties(password_manager PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/exe/Debug"
