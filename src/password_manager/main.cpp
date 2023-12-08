@@ -1,6 +1,3 @@
-// password_manager.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
 #include <string>
 #include <map>
@@ -41,7 +38,7 @@ namespace
 			sstream << it.first;
 			sstream << " ";
 			sstream << it.second;
-			sstream << " ";
+			sstream << std::endl;
 		}
 		std::string result = sstream.str();
 		result.pop_back(); // Remove trailing white space
@@ -52,6 +49,9 @@ namespace
 	CredentialDB deserialize_database(const std::string& str)
 	{
 		CredentialDB database;
+		
+		if (str.length() < 1) return database;
+
 		std::stringstream sstream(str);
 		while (!sstream.eof()) {
 			std::string user_name;
@@ -136,7 +136,7 @@ namespace
 #pragma region TestFunctions
 	bool test_serialize_databse()
 	{
-		std::string expected_string = "David Woods Ed Sheeran John Miller Taylor Swift ";
+		std::string expected_string = "David Woods\nEd Sheeran\nJohn Miller\nTaylor Swift";
 		CredentialDB test_map;
 		test_map.emplace(std::pair("John", "Miller"));
 		test_map.emplace(std::pair("David", "Woods"));
@@ -155,7 +155,7 @@ namespace
 		test_map.emplace(std::pair("Taylor", "Swift"));
 		test_map.emplace(std::pair("Ed", "Sheeran"));
 
-		std::string test_string = "David Woods Ed Sheeran John Miller Taylor Swift ";
+		std::string test_string = "David Woods\nEd Sheeran\nJohn Miller\nTaylor Swift";
 		auto db = deserialize_database(test_string);
 
 		return db.size() == test_map.size();
@@ -224,14 +224,3 @@ int main(int argc, char* argv[])
 
 	return EXIT_SUCCESS;
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
