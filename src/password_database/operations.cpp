@@ -17,7 +17,7 @@ void password_database::Operations::add_credential(const std::string& username, 
 {
 	std::string encrypted_password = encrypt_string(password.c_str(), p_master_password.c_str());
 
-	//#define UPDATE_ALLOWED
+#define UPDATE_ALLOWED
 #ifdef UPDATE_ALLOWED
 	auto it = p_database.find(username);
 	if (it != p_database.end())
