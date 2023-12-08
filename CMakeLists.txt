@@ -15,6 +15,9 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
+# Add cmake/modules to the module path
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
+
 # Add subdirectory for password_manager
 add_subdirectory(src)
 

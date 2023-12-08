@@ -1,4 +1,8 @@
+# Folders
 .vs/
-
 _build/
+3rd_party/
 exe/
+
+# Files
+3rd_party.7z
