@@ -41,7 +41,7 @@ namespace
 			sstream << it.first;
 			sstream << " ";
 			sstream << it.second;
-			sstream << " ";
+			sstream << std::endl;
 		}
 		std::string result = sstream.str();
 		result.pop_back(); // Remove trailing white space
@@ -136,7 +136,7 @@ namespace
 #pragma region TestFunctions
 	bool test_serialize_databse()
 	{
-		std::string expected_string = "David Woods Ed Sheeran John Miller Taylor Swift ";
+		std::string expected_string = "David Woods\nEd Sheeran\nJohn Miller\nTaylor Swift";
 		CredentialDB test_map;
 		test_map.emplace(std::pair("John", "Miller"));
 		test_map.emplace(std::pair("David", "Woods"));
@@ -155,7 +155,7 @@ namespace
 		test_map.emplace(std::pair("Taylor", "Swift"));
 		test_map.emplace(std::pair("Ed", "Sheeran"));
 
-		std::string test_string = "David Woods Ed Sheeran John Miller Taylor Swift ";
+		std::string test_string = "David Woods\nEd Sheeran\nJohn Miller\nTaylor Swift";
 		auto db = deserialize_database(test_string);
 
 		return db.size() == test_map.size();
